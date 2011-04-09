@@ -1,0 +1,83 @@
+<!DOCTYPE html>  <html> <head>   <title>amb-test.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               amb-test.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h1>AMBJS - A variation of John McCarthy's AMB operator.</h1>
+
+<p>Copyright (C) 2011 Patrick Logan</p>
+
+<p>Distributed under the terms of the GNU LESSER GENERAL PUBLIC LICENSE, Version 3.</p>
+
+<p>See the README, COPYING, and COPYING.LESSER files in this distribution.</p>
+
+<p>This file provides examples as qunit tests.  Visiting the file
+ambjs/public/test.html should be sufficient for running the tests
+in a browser.</p>
+
+<p>The script test.sh will run the qunit tests in a shell if phantomjs
+is installed.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>This is a simple use of the identity function in order to have AMB
+return one of the given choices nondeterministically.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;ambiguously selecting a value&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">amb</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="nx">_</span><span class="p">.</span><span class="nx">identity</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+	<span class="nx">ok</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">include</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="nx">n</span><span class="p">),</span> <span class="s2">&quot;AMB should choose one of the given values: &quot;</span> <span class="o">+</span> <span class="nx">n</span><span class="p">);</span>
+    <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Given no choices AMB will fail without ever invoking the given
+function.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;no choices always fails&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">amb</span><span class="p">([],</span> <span class="nx">_</span><span class="p">.</span><span class="nx">identity</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+	<span class="nx">equal</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="s2">&quot;AMB should always fail when given no choices.&quot;</span><span class="p">);</span>
+    <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Nested applications of AMB can be used to search for successful
+permutations of choices. </p>
+
+<p>In this case "failure" is a misnomer. Each of the failure
+functions will be called once per choice in order to backtrack
+through each of the nested choices.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;find the sums of pairs less than 10&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+	<span class="nx">amb</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">failOuter</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="nx">amb</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">y</span><span class="p">,</span> <span class="nx">failInner</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+		    <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="o">:</span><span class="nx">x</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="o">:</span><span class="nx">y</span><span class="p">});</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="nx">failInner</span><span class="p">();</span>
+	    <span class="p">},</span> <span class="kc">null</span><span class="p">);</span>
+	    <span class="k">return</span> <span class="nx">failOuter</span><span class="p">();</span>
+	<span class="p">},</span> <span class="kc">null</span><span class="p">);</span>
+	<span class="nx">equal</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;AMB should find two successful pairs.&quot;</span><span class="p">);</span>
+	<span class="nx">ok</span><span class="p">(</span><span class="nx">results</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">results</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;The first pair should be less than 10.&quot;</span><span class="p">);</span>
+	<span class="nx">ok</span><span class="p">(</span><span class="nx">results</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">results</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;The other pair should be less than 10.&quot;</span><span class="p">);</span>
+    <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>This is a helper function for the next test. This returns true if
+the last character of the first string is equal to the first letter
+of the second string.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">adjacent</span><span class="p">(</span><span class="nx">str1</span><span class="p">,</span> <span class="nx">str2</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">str1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">str2</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+	    <span class="nx">str1</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">str2</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span>
+	    <span class="nx">str1</span><span class="p">[</span><span class="nx">str1</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nx">str2</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Four nested applications of AMB are used to find all
+permutations of adjacent sequences. A successful sequence is
+where a string from the first array of choices is adjecent to a
+string from the second array of choices. And so on for all four
+arrays of choices.</p>
+
+<p>This is another case where "failure" is a misnomer. Each of the
+failure functions will be called once per choice in order to
+backtrack through each of the nested choices.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;find adjacent strings&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    	<span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+    	<span class="nx">amb</span><span class="p">([</span><span class="s2">&quot;the&quot;</span><span class="p">,</span> <span class="s2">&quot;that&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">fail1</span><span class="p">)</span> <span class="p">{</span>
+    	    <span class="nx">amb</span><span class="p">([</span><span class="s2">&quot;frog&quot;</span><span class="p">,</span> <span class="s2">&quot;elephant&quot;</span><span class="p">,</span> <span class="s2">&quot;thing&quot;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s2</span><span class="p">,</span> <span class="nx">fail2</span><span class="p">)</span> <span class="p">{</span>
+    		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">adjacent</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">))</span> <span class="p">{</span>
+    		    <span class="k">return</span> <span class="nx">fail2</span><span class="p">();</span>
+    		<span class="p">}</span>
+    		<span class="nx">amb</span><span class="p">([</span><span class="s2">&quot;walked&quot;</span><span class="p">,</span> <span class="s2">&quot;treaded&quot;</span><span class="p">,</span> <span class="s2">&quot;grows&quot;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s3</span><span class="p">,</span> <span class="nx">fail3</span><span class="p">)</span> <span class="p">{</span>
+    		    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">adjacent</span><span class="p">(</span><span class="nx">s2</span><span class="p">,</span> <span class="nx">s3</span><span class="p">))</span> <span class="p">{</span>
+    			<span class="k">return</span> <span class="nx">fail3</span><span class="p">();</span>
+    		    <span class="p">}</span>
+    		    <span class="nx">amb</span><span class="p">([</span><span class="s2">&quot;slowly&quot;</span><span class="p">,</span> <span class="s2">&quot;quickly&quot;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s4</span><span class="p">,</span> <span class="nx">fail4</span><span class="p">)</span> <span class="p">{</span>
+    			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">adjacent</span><span class="p">(</span><span class="nx">s3</span><span class="p">,</span> <span class="nx">s4</span><span class="p">))</span> <span class="p">{</span>
+    			    <span class="k">return</span> <span class="nx">fail4</span><span class="p">();</span>
+    			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    			    <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">,</span> <span class="nx">s3</span><span class="p">,</span> <span class="nx">s4</span><span class="p">]);</span>
+    			<span class="p">}</span>
+    		    <span class="p">});</span>
+    		<span class="p">});</span>
+    	    <span class="p">});</span>
+    	    <span class="k">return</span> <span class="nx">fail1</span><span class="p">();</span>
+    	<span class="p">});</span>
+	<span class="nx">equal</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;AMB should find one sequence of adjacent strings.&quot;</span><span class="p">);</span>
+	<span class="nx">deepEqual</span><span class="p">([</span><span class="s2">&quot;that&quot;</span><span class="p">,</span> <span class="s2">&quot;thing&quot;</span><span class="p">,</span> <span class="s2">&quot;grows&quot;</span><span class="p">,</span> <span class="s2">&quot;slowly&quot;</span><span class="p">],</span> <span class="nx">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;The one successful sequence should be this one.&quot;</span><span class="p">);</span>
+    <span class="p">});</span>
+
+<span class="p">});</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
