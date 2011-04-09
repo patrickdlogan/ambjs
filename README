@@ -1,0 +1,77 @@
+COPYING
+
+This file is part of AMBJS.
+
+AMBJS is free software: you can redistribute it and/or modify it under
+the terms of the Lesser GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+AMBJS is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the Lesser GNU General Public
+License for more details.
+
+You should have received a copy of the Lesser GNU General Public
+License along with AMBJS. See the files COPYING.LESSER and COPYING. If
+these files are not present, see http://www.gnu.org/licenses/
+
+LICENSE
+
+Copyright (C) 2011 Patrick Logan
+
+Distributed under the terms of the GNU LESSER GENERAL PUBLIC LICENSE, Version 3.
+
+See also http://www.gnu.org/licenses/
+
+CONTACT
+
+patrickdlogan uses gmail
+
+VERSION
+
+v0.1.0
+
+Initial version.
+
+FUNCTIONALITY
+
+AMBJS is an Javascript implementation of a variation of John
+McCarthy's AMB operator.
+
+See the PDF of his 1963 "A Basis for a Mathematical Theory of
+Computation" at http://www-formal.stanford.edu/jmc/basis1.pdf
+
+See also http://mitpress.mit.edu/sicp/full-text/sicp/book/node89.html
+
+Traditionally AMB takes an zero or more expressions and
+nondeterministically chooses to evaluate one of them. (AMB stands for
+"ambiguous")
+
+If the chosen expression "fails" (see below) then AMB will attempt to
+"backtrack" and choose from the remaining expressions.
+
+AMB applied to zero expressions always "fails".
+
+This Javascript implementation works somewhat differently. AMB takes
+three arguments:
+
+An array of values; a function of two arguments; and a "failure value".
+
+AMB chooses nondeterministically one of the values from the array and
+applies that to the given function. The second argument to the
+function is a "fail" function.
+
+The given function should return a value indicating the successful
+application of the chosen value. AMB then returns that value to its
+caller.
+
+If the function "fails" then it should return the result of calling
+its second argument, the "fail" function.
+
+AMB will return first successful function result to its caller. If
+every application of the function fails, then AMB will return the
+given "failure value" to its caller.
+
+See the qunit tests in this distribution for examples. See also <the
+blog post>.
