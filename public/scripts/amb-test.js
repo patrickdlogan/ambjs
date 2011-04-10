@@ -60,7 +60,8 @@ $(document).ready(function() {
     // of the outer AMB.
     //
     // Also note the use of AMB in the test assertion, because there
-    // are multiple possible correct answers.
+    // are multiple possible correct answers. The two assertions are
+    // functionally equivalent.
     test("SAT Official Question of the Day for April 10, 2011", function() {
 	var digits_from_0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 	var digits_from_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -75,7 +76,8 @@ $(document).ready(function() {
 		}, failT());
 	    }, failH());
 	});
-	ok(amb([312, 624, 936], function(x, f) { return (x == n) ? true : f(); }, false), "The answer should be one of the given values: " + n);
+	ok(_.any([312, 624, 936], function(x) { return x == n; }), "The answer should be in the given array: " + n);
+	ok(amb([312, 624, 936], function(x, f) { return (x == n) ? true : f(); }, false), "The answer should be one of the given AMB values: " + n);
     });
 
     // This is a helper function for the next test. This returns true
