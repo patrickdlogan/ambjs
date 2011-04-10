@@ -1,0 +1,48 @@
+<!DOCTYPE html>  <html> <head>   <title>amb.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               amb.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h1>AMBJS - A variation of John McCarthy's AMB operator.</h1>
+
+<p>Copyright (C) 2011 Patrick Logan</p>
+
+<p>Distributed under the terms of the GNU LESSER GENERAL PUBLIC LICENSE, Version 3.</p>
+
+<p>See the README, COPYING, and COPYING.LESSER files in this distribution.</p>
+
+<ul>
+<li>"choices" is an array of values.</li>
+<li>"fn" is a function of two arguments, one of the choices and a function to call if that choice fails.</li>
+<li>"failure_result" is a value for AMB to return if all choices fail (or if the choices array is empty).</li>
+</ul>
+
+<p>AMB selects one of the choices nondeterministically and applies
+that to the given function along with a "fail" function.</p>
+
+<p>If the function succeeds with the choice then it should return the
+value it computes for that choice. AMB will then return this result
+to its caller.</p>
+
+<p>If the function fails with the choice then should return the result
+of calling the failure function with no arguments.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">amb</span><span class="p">(</span><span class="nx">choices</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">failure_result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">cs</span> <span class="o">=</span> <span class="nx">choices</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">fail_token</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="kd">var</span> <span class="nx">fail</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">fail_token</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">cs</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">randomChoice</span><span class="p">(</span><span class="nx">cs</span><span class="p">);</span>
+	<span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">fail</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="nx">r</span> <span class="o">===</span> <span class="nx">fail_token</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="nx">cs</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">without</span><span class="p">(</span><span class="nx">cs</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	    <span class="k">return</span> <span class="nx">r</span><span class="p">;</span>
+	<span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">failure_result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">randomIntegerBetween</span><span class="p">(</span><span class="nx">min_inclusive</span><span class="p">,</span> <span class="nx">max_exclusive</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="nx">max_exclusive</span> <span class="o">-</span> <span class="nx">min_inclusive</span><span class="p">))</span> <span class="o">+</span> <span class="nx">min_inclusive</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">randomChoice</span><span class="p">(</span><span class="nx">choices</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">randomIntegerBetween</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">choices</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">choices</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+<span class="p">}</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
