@@ -50,9 +50,9 @@ $(document).ready(function() {
 	ok(results[1].x + results[1].y < 10, "The other pair should be less than 10.");
     });
 
-    // This is a helper function for the next test. This returns true if
-    // the last character of the first string is equal to the first letter
-    // of the second string.
+    // This is a helper function for the next test. This returns true
+    // if the last character of the first string is equal to the first
+    // character of the second string.
     function adjacent(str1, str2) {
 	return _.isString(str1) && _.isString(str2) &&
 	    str1.length > 0 && str2.length > 0 &&
@@ -79,19 +79,30 @@ $(document).ready(function() {
     		    if (!adjacent(s2, s3)) {
     			return fail3();
     		    }
-    		    amb(["slowly", "quickly"], function(s4, fail4) {
-    			if (!adjacent(s3, s4)) {
-    			    return fail4();
-    			} else {
+    		    amb(["slowly", "quickly", "dreadfully"], function(s4, fail4) {
+    			if (adjacent(s3, s4)) {
     			    results.push([s1, s2, s3, s4]);
     			}
+			return fail4();
     		    });
     		});
     	    });
     	    return fail1();
     	});
-	equal(results.length, 1, "AMB should find one sequence of adjacent strings.");
-	deepEqual(["that", "thing", "grows", "slowly"], results[0], "The one successful sequence should be this one.");
+	// Note the utility of higher-order functions.
+	function deepEqualOrFail(sequence) {
+	    return function(i, fail) {
+		if (_.isEqual(sequence, results[i])) {
+		    return true;
+		} else {
+		    return fail();
+		}
+	    }
+	}
+	equal(results.length, 2, "AMB should find one sequence of adjacent strings.");
+	// Note the utility of AMB in writing test assertions.
+	ok(amb([0, 1], deepEqualOrFail(["that", "thing", "grows", "slowly"]),         false));
+	ok(amb([0, 1], deepEqualOrFail(["the", "elephant", "treaded", "dreadfully"]), false));
     });
 
 });
