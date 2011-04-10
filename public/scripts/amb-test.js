@@ -50,6 +50,34 @@ $(document).ready(function() {
 	ok(results[1].x + results[1].y < 10, "The other pair should be less than 10.");
     });
 
+    // Test to find a three digit number where the hundreds digit is
+    // three times the tens digit and the tens digit is 1/2 the ones
+    // digit. This is from the SAT Official Question of the Day email
+    // sent April 10, 2011.
+    //
+    // Note the use of an outer fail value as the failure response to
+    // an inner AMB. A success value is returned on up to the caller
+    // of the outer AMB.
+    //
+    // Also note the use of AMB in the test assertion, because there
+    // are multiple possible correct answers.
+    test("SAT Official Question of the Day for April 10, 2011", function() {
+	var digits_from_0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+	var digits_from_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+	var n = amb(digits_from_1, function(h, failH) {
+	    return amb(digits_from_0, function(t, failT) {
+		return amb(digits_from_0, function(o, failO) {
+		    if (h == 3*t && o == 2*t) {
+			return h*100 + 10*t + o;
+		    } else {
+			return failO();
+		    }
+		}, failT());
+	    }, failH());
+	});
+	ok(amb([312, 624, 936], function(x, f) { return (x == n) ? true : f(); }, false), "The answer should be one of the given values: " + n);
+    });
+
     // This is a helper function for the next test. This returns true
     // if the last character of the first string is equal to the first
     // character of the second string.
